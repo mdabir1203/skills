@@ -1,0 +1,41 @@
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor noise
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+*.zip
+*.tar.gz
+
+# Secrets and per-machine state
+.env
+.env.local
+*.pem
+*.key
+
+# Test artifacts
+coverage/
+.nyc_output/
+
+# Skill-specific: published-posts.md is per-user, don't commit real publish logs
+# (uncomment the line below if you want to opt-in to publishing it)
+# !skills/case-study-publisher/references/published-posts.md
