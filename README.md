@@ -9,8 +9,9 @@ Each skill is a self-contained package that teaches an AI agent (Claude, Cursor,
 | Skill | What it does | Status |
 |---|---|---|
 | [`case-study-publisher`](./skills/case-study-publisher/) | Turn code fixes into AEO-optimized Medium / Dev.to / Hashnode / HackerNoon case studies with zero AI slop | v1.0.0 |
+| [`keynote-explainer`](./skills/keynote-explainer/) | Build Apple/Google/Silicon Valley-style motion video explainers in Remotion — 5-stage pipeline, 6 neuromarketing drivers, controlled imperfection as signature | v0.1.0 |
 
-More skills planned. If you have a request, open an issue.
+More skills in progress. If you have a request, open an issue.
 
 ## How to use a skill
 
