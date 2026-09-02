@@ -50,7 +50,8 @@ jobs:
 
           echo "skill=$SKILL" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Packaging skill: $SKILL v$VERSION"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Packaging skill: $SKILL v$VERSION (tag: $TAG)"
 
       - name: Build the zip
         run: |
@@ -89,7 +90,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ steps.meta.outputs.tag }}
           name: ${{ steps.meta.outputs.skill }} v${{ steps.meta.outputs.version }}
           body_path: ${{ steps.notes.outputs.notes_file }}
           files: ${{ steps.meta.outputs.skill }}-${{ steps.meta.outputs.version }}.zip
