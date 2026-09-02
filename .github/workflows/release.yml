@@ -1,0 +1,100 @@
+name: release-skill
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: 'Skill folder name to release (e.g. keynote-explainer)'
+        required: true
+      version:
+        description: 'Version string (e.g. 0.1.0)'
+        required: true
+        default: '0.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: Package and release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine skill name and version
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            # Convention: <skill-name>-v<semver>. Split on the last "-v" boundary.
+            if [[ "$TAG" =~ ^(.+)-v([0-9]+\.[0-9]+\.[0-9]+.*)$ ]]; then
+              SKILL="${BASH_REMATCH[1]}"
+              VERSION="${BASH_REMATCH[2]}"
+            else
+              echo "Tag '$TAG' does not match <skill-name>-v<semver>. Aborting."
+              exit 1
+            fi
+          else
+            SKILL="${{ inputs.skill }}"
+            VERSION="${{ inputs.version }}"
+          fi
+
+          if [ ! -d "skills/$SKILL" ]; then
+            echo "Skill folder 'skills/$SKILL' not found. Aborting."
+            exit 1
+          fi
+
+          echo "skill=$SKILL" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Packaging skill: $SKILL v$VERSION"
+
+      - name: Build the zip
+        run: |
+          SKILL="${{ steps.meta.outputs.skill }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          OUT="$SKILL-$VERSION.zip"
+          cd "skills/$SKILL"
+          # Exclude OS noise, editor noise, and per-machine state.
+          zip -r "../../$OUT" . \
+            -x "*.DS_Store" \
+              "Thumbs.db" \
+              "desktop.ini" \
+              ".vscode/*" \
+              ".idea/*" \
+              "*.swp" \
+              "*.swo" \
+              "*~" \
+              "node_modules/*" \
+              "*.log"
+          cd ../..
+          ls -la "$OUT"
+
+      - name: Resolve release notes
+        id: notes
+        run: |
+          SKILL="${{ steps.meta.outputs.skill }}"
+          if [ -f "skills/$SKILL/CHANGELOG.md" ]; then
+            # Extract the first ## section (current version) from the changelog.
+            awk '/^## \[/{flag=1; count++} flag{print} count==1 && /^## \[/{if(NR>1) exit}' \
+              "skills/$SKILL/CHANGELOG.md" > release-notes.md
+            echo "notes_file=release-notes.md" >> "$GITHUB_OUTPUT"
+          else
+            echo "notes_file=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.skill }} v${{ steps.meta.outputs.version }}
+          body_path: ${{ steps.notes.outputs.notes_file }}
+          files: ${{ steps.meta.outputs.skill }}-${{ steps.meta.outputs.version }}.zip
+          draft: false
+          prerelease: ${{ contains(steps.meta.outputs.version, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
