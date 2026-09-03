@@ -10,6 +10,8 @@ Each skill is a self-contained package that teaches an AI agent (Claude, Cursor,
 |---|---|---|
 | [`case-study-publisher`](./skills/case-study-publisher/) | Turn code fixes into AEO-optimized Medium / Dev.to / Hashnode / HackerNoon case studies with zero AI slop | v1.0.0 |
 | [`keynote-explainer`](./skills/keynote-explainer/) | Build Apple/Google/Silicon Valley-style motion video explainers in Remotion — 5-stage pipeline, 6 neuromarketing drivers, controlled imperfection as signature | v0.1.0 |
+| [`aixchinesexrussianxbangladesh`](./skills/aixchinesexrussianxbangladesh/) | Outcome-Driven Engineering — 17 principles as a behavioral guardrail, not a procedural workflow. Stop at verified movement toward the desired state, not at "should work" | v0.1.0 |
+| [`abirxkarpathyxrussianxchinese1`](./skills/abirxkarpathyxrussianxchinese1/) | The 9-step engineering loop (Understand → Define → Simplify → Build → Test → Attack → Measure → Verify → Iterate) with 13 principles. Composes with `aixchinesexrussianxbangladesh` for full coverage | v0.1.0-rc1 |
 
 More skills in progress. If you have a request, open an issue.
 
